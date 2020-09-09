@@ -8,7 +8,7 @@ if(!isset($_SESSION['username'])){
 if(isset($_POST['title']) && isset($_POST['type']) && isset($_POST['description']) && isset($_POST['class'])){
   if(strlen($_POST['title']) < 1 || strlen($_POST['type']) < 1 || strlen($_POST['description']) < 1 || strlen($_POST['class']) < 1){
     $_SESSION["error"] = "All fields are required";
-    header('Location: announcements.php');
+    header('Location: assignments.php');
     return;
   }
 
@@ -20,7 +20,7 @@ if(isset($_POST['title']) && isset($_POST['type']) && isset($_POST['description'
       $file_tmp = $_FILES['filein']['tmp_name'];
       $file_type = $_FILES['filein']['type'];
       $file_ext = strtolower(end(explode('.',$_FILES['filein']['name'])));
-      $location = "uploads/announcements/".$file_name;
+      $location = "uploads/assignments/".$file_name;
       move_uploaded_file($file_tmp,$location);
     }
     $stmt = $mysql->prepare('INSERT INTO post(title,posttext,file,posttime,type,classID,teacherID) values(:title, :posttext, :file, now(), :type, :classID, :tid)');
@@ -32,13 +32,17 @@ if(isset($_POST['title']) && isset($_POST['type']) && isset($_POST['description'
       ':classID' => $_POST['class'],
       ':tid' => $_SESSION['username']
     ));
-    header('Location: announcements.php');
+    header('Location: assignments.php');
     return;
 
   }
 
 }
-?>
+
+
+
+
+ ?>
 
 <!DOCTYPE html>
 <html>
@@ -46,7 +50,7 @@ if(isset($_POST['title']) && isset($_POST['type']) && isset($_POST['description'
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>Announcements</title>
+    <title>Assignments</title>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/Navigation-with-Button.css">
     <link rel="stylesheet" href="assets/css/styles.css">
@@ -58,9 +62,9 @@ if(isset($_POST['title']) && isset($_POST['type']) && isset($_POST['description'
             <div class="collapse navbar-collapse"
                 id="navcol-1">
                 <ul class="nav navbar-nav mr-auto">
-                    <li class="nav-item"><a class="nav-link" href="#">Announcements</a></li>
+                    <li class="nav-item"><a class="nav-link" href="announcements.php">Announcements</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Attendance</a></li>
-                    <li class="nav-item"><a class="nav-link" href="assignments.php">Assignments</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Assignments</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Grades</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Time Table</a></li>
                     <li class="nav-item"><a class="nav-link" href="profile.php">Profile</a></li>
@@ -69,11 +73,10 @@ if(isset($_POST['title']) && isset($_POST['type']) && isset($_POST['description'
     </nav>
     <div class="container-fluid">
       <?php
-      //Teacher's UI
         if(strpos($_SESSION['username'],"T") !==FALSE){
           echo '<div class="card content-post">
               <div class="card-body">
-                  <h4 class="card-title">New Announcement</h4>';
+                  <h4 class="card-title">New Assignment</h4>';
 
                     if(isset($_SESSION['error'])) {
                       echo('<p style="color:red;">'.htmlentities($_SESSION['error'])."</p>\n");
@@ -82,7 +85,7 @@ if(isset($_POST['title']) && isset($_POST['type']) && isset($_POST['description'
                   echo'<form method="post" enctype="multipart/form-data">
                       <div class="form-group row"><label class="col-md-3" style="margin: 0px;">Title</label>
                           <div class="col-sm-9"><input class="form-control" type="text" name="title">
-                          <input class="form-control" type="hidden" name="type" value="announcement">
+                          <input class="form-control" type="hidden" name="type" value="assignment">
                           <input class="form-control" type="hidden" name="author" value="'.htmlentities($_SESSION['username']).'"></div></div>';
 
                       $stmt = $mysql->prepare('SELECT class.classID, year, division, deptName FROM class join teaches_in on class.classID = teaches_in.classID join department where teacherID = :tid and class.deptID = department.deptID');
@@ -105,40 +108,36 @@ if(isset($_POST['title']) && isset($_POST['type']) && isset($_POST['description'
                       <button class="btn btn-primary offset-md-3" type="submit">Submit</button>
                   </form></div>
                   </div>';
-                  if(isset($_SESSION['success'])) {
-                    echo('<p style="color:green;">'.htmlentities($_SESSION['success'])."</p>\n");
-                    unset($_SESSION["success"]);
-                  }
-                  $stmt = $mysql->prepare('SELECT * FROM post WHERE type="announcement" AND teacherID = :id');
+
+                  $stmt = $mysql->prepare('SELECT * FROM post WHERE type="assignment" AND teacherID = :id');
                   $stmt->execute(array(
                     ':id' => $_SESSION['username']
                   ));
                   $row = $stmt->fetch(PDO::FETCH_ASSOC);
                   while($row!==FALSE){
-                    echo '<div class="card content-post row">
+                    echo '<div class="card content-post">
                         <div class="card-body">
                             <h4 class="card-title">'.htmlentities($row['title']).'</h4>
                             <h6 class="text-muted card-subtitle mb-2">'.htmlentities($row['posttime']).'</h6>
                             <p class="card-text">'.htmlentities($row['posttext']).'</p>';
-                            if($row['file']!=='uploads/announcements/'){
+                            if($row['file']!=='uploads/assignments/'){
                                 echo'<a class="card-link" href="'.htmlentities($row['file']).'" download>Download Attachment</a>';
                             }
+
                     echo'</div>
                     <div class="offset-11"><a class="btn btn-light action-button btn-logout" role="button" style="color:white;" href="delete.php?postID='.$row['postID'].'">Delete</a></div>
                     </div>';
                     $row = $stmt->fetch(PDO::FETCH_ASSOC);
                   }
                 }
-
-                //Student's UI
                 else{
-                  $stmt = $mysql->prepare('SELECT title,posttime,posttext,file,teacher.name as author FROM post,student,teacher WHERE type="announcement" AND studentID = :id AND post.classID = student.classID AND post.teacherID = teacher.teacherID');
+                  $stmt = $mysql->prepare('SELECT title,posttime,posttext,file,teacher.name as author FROM post,student,teacher WHERE type="assignment" AND studentID = :id AND post.classID = student.classID AND post.teacherID = teacher.teacherID');
                   $stmt->execute(array(
                     ':id' => $_SESSION['username']
                   ));
                   $row = $stmt->fetch(PDO::FETCH_ASSOC);
                   if($row===FALSE){
-                    echo'<div class="card content-post"><h4>No Announcements</h4></div>';
+                    echo'<div class="card content-post"><h4>No Assignments</h4></div>';
                   }
                   while($row!==FALSE){
                     echo '<div class="card content-post">
@@ -147,7 +146,7 @@ if(isset($_POST['title']) && isset($_POST['type']) && isset($_POST['description'
                             <h6 class="text-muted card-subtitle mb-2">'.htmlentities($row['author']).'</h6>
                             <h6 class="text-muted card-subtitle mb-2">'.htmlentities($row['posttime']).'</h6>
                             <p class="card-text">'.htmlentities($row['posttext']).'</p>';
-                            if($row['file']!=='uploads/announcements/'){
+                            if($row['file']!=='uploads/assignments/'){
                                 echo'<a class="card-link" href="'.htmlentities($row['file']).'" download>Download Attachment</a>';
                             }
                     echo'</div></div>';

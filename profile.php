@@ -27,7 +27,7 @@ $error = isset($_SESSION['error']) ? $_SESSION['error']: false;
                 <ul class="nav navbar-nav mr-auto">
                     <li class="nav-item"><a class="nav-link" href="announcements.php">Announcements</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Attendance</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Assignments</a></li>
+                    <li class="nav-item"><a class="nav-link" href="assignments.php">Assignments</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Grades</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Time Table</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Profile</a></li>
@@ -36,10 +36,10 @@ $error = isset($_SESSION['error']) ? $_SESSION['error']: false;
     </nav>
     <div class="container-fluid">
         <div class="row">
-            <div class="col col-xl-6">
+            <div class="col col-xl-12">
                 <div class="card content-post">
                     <div class="row">
-                        <div class="col-lg-4 justify-content-center d-flex"><img class="rounded-circle img-thumbnail" src="assets/img/blank-profile-picture-973460_640.png" style="height:150px;width:150px;"></div>
+                        <div class="col-lg-3 justify-content-center d-flex"><img class="rounded-circle img-thumbnail" src="assets/img/blank-profile-picture-973460_640.png" style="height:150px;width:150px;"></div>
                         <div class="col-lg-8 justify-content-center justify-content-lg-start d-flex">
                             <div class="row justify-content-center">
                                 <div class="col-lg-12 justify-content-center text-center text-lg-left">
@@ -51,6 +51,19 @@ $error = isset($_SESSION['error']) ? $_SESSION['error']: false;
                                       $row = $stmt->fetch(PDO::FETCH_ASSOC);
                                       echo '<h6 class="text-muted card-subtitle mb-2">Teacher ID : '.htmlentities($row['teacherID']).'</h6>';
                                       echo '<p>'.htmlentities($row['designation']).' | '.htmlentities($row['deptName']).'</p>';
+                                      echo '<p>Email : '.htmlentities($row['email']).'</p>';
+                                      echo '<p>Address : '.htmlentities($row['address']).'</p>';
+                                      echo '<p>Date of Birth : '.htmlentities($row['dob']).'</p>';
+
+                                    }
+                                    else if(strpos($_SESSION['username'],"S")!==FALSE){
+                                      $stmt = $mysql->prepare('SELECT * FROM student,class,department WHERE studentID = :sid AND student.classID = class.classID AND class.deptID = department.deptID');
+                                      $stmt->execute(array(':sid' => $_SESSION['username']));
+                                      $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                                      echo '<h6 class="text-muted card-subtitle mb-2">Student ID : '.htmlentities($row['studentID']).'</h6>';
+                                      echo '<p>'.htmlentities($row['year']).' | '.htmlentities($row['deptName']).'</p>';
+                                      echo '<p>Email : '.htmlentities($row['email']).'</p>';
+                                      echo '<p>Address : '.htmlentities($row['address']).'</p>';
                                       echo '<p>Date of Birth : '.htmlentities($row['dob']).'</p>';
                                     }
                                    ?>
