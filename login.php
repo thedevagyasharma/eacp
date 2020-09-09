@@ -19,7 +19,6 @@ if(isset($_POST['username'])  && isset($_POST['password'])){
       if ( $row !== false ) {
         $_SESSION['name'] = $row['name'];
         $_SESSION['username'] = $row['studentID'];
-        $_SESSION['who'] = "student";
         header("Location: profile.php");
         return;
       }
@@ -37,7 +36,6 @@ if(isset($_POST['username'])  && isset($_POST['password'])){
       if ( $row !== false ) {
         $_SESSION['name'] = $row['name'];
         $_SESSION['username'] = $row['teacherID'];
-        $_SESSION['who'] = "teacher";
         header("Location: profile.php");
         return;
       }

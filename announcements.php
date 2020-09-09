@@ -23,13 +23,14 @@ if(isset($_POST['title']) && isset($_POST['type']) && isset($_POST['description'
       $location = "uploads/".$file_name;
       move_uploaded_file($file_tmp,$location);
     }
-    $stmt = $mysql->prepare('INSERT INTO post(title,posttext,file,posttime,type,classID) values(:title, :posttext, :file, now(), :type, :classID)');
+    $stmt = $mysql->prepare('INSERT INTO post(title,posttext,file,posttime,type,classID,teacherID) values(:title, :posttext, :file, now(), :type, :classID, :tid)');
     $stmt->execute(array(
       ':title' => $_POST['title'],
       ':type' => $_POST['type'],
       ':posttext' => $_POST['description'],
       ':file' => $location,
-      ':classID' => $_POST['class']
+      ':classID' => $_POST['class'],
+      ':tid' => $_SESSION['username']
     ));
     header('Location: announcements.php');
     return;
@@ -49,7 +50,7 @@ if(isset($_POST['title']) && isset($_POST['type']) && isset($_POST['description'
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>announcement</title>
+    <title>Announcements</title>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/Navigation-with-Button.css">
     <link rel="stylesheet" href="assets/css/styles.css">
@@ -72,17 +73,15 @@ if(isset($_POST['title']) && isset($_POST['type']) && isset($_POST['description'
     </nav>
     <div class="container-fluid">
       <?php
-        if($_SESSION['who'] === "teacher"){
+        if(strpos($_SESSION['username'],"T") !==FALSE){
           echo '<div class="card content-post">
               <div class="card-body">
-                  <h4 class="card-title">New Announcement</h4>';?>
-                  <?php
+                  <h4 class="card-title">New Announcement</h4>';
+
                     if(isset($_SESSION['error'])) {
                       echo('<p style="color:red;">'.htmlentities($_SESSION['error'])."</p>\n");
                       unset($_SESSION["error"]);
                     }
-                  ?>
-                  <?php
                   echo'<form method="post" enctype="multipart/form-data">
                       <div class="form-group row"><label class="col-md-3" style="margin: 0px;">Title</label>
                           <div class="col-sm-9"><input class="form-control" type="text" name="title">
@@ -109,30 +108,51 @@ if(isset($_POST['title']) && isset($_POST['type']) && isset($_POST['description'
                       <button class="btn btn-primary offset-md-3" type="submit">Submit</button>
                   </form></div>
                   </div>';
+
+                  $stmt = $mysql->prepare('SELECT * FROM post WHERE type="announcement" AND teacherID = :id');
+                  $stmt->execute(array(
+                    ':id' => $_SESSION['username']
+                  ));
+                  $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                  while($row!==FALSE){
+                    echo '<div class="card content-post">
+                        <div class="card-body">
+                            <h4 class="card-title">'.htmlentities($row['title']).'</h4>
+                            <h6 class="text-muted card-subtitle mb-2">'.htmlentities($row['posttime']).'</h6>
+                            <p class="card-text">'.htmlentities($row['posttext']).'</p>';
+                            if($row['file']!=='uploads/'){
+                                echo'<a class="card-link" href="'.htmlentities($row['file']).'" download>Download Attachment</a>';
+                            }
+                    echo'</div></div>';
+                    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                  }
+                }
+                else{
+                  $stmt = $mysql->prepare('SELECT title,posttime,posttext,file,teacher.name as author FROM post,student,teacher WHERE type="announcement" AND studentID = :id AND post.classID = student.classID AND post.teacherID = teacher.teacherID');
+                  $stmt->execute(array(
+                    ':id' => $_SESSION['username']
+                  ));
+                  $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                  if($row===FALSE){
+                    echo'<div class="card content-post"><h4>No Announcements</h4></div>';
+                  }
+                  while($row!==FALSE){
+                    echo '<div class="card content-post">
+                        <div class="card-body">
+                            <h4 class="card-title">'.htmlentities($row['title']).'</h4>
+                            <h6 class="text-muted card-subtitle mb-2">'.htmlentities($row['author']).'</h6>
+                            <h6 class="text-muted card-subtitle mb-2">'.htmlentities($row['posttime']).'</h6>
+                            <p class="card-text">'.htmlentities($row['posttext']).'</p>';
+                            if($row['file']!=='uploads/'){
+                                echo'<a class="card-link" href="'.htmlentities($row['file']).'" download>Download Attachment</a>';
+                            }
+                    echo'</div></div>';
+                    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                  }
                 }
        ?>
 
-        <div class="card content-post">
-            <div class="card-body">
-                <h4 class="card-title">Announcement Title</h4>
-                <h6 class="text-muted card-subtitle mb-2">Teacher's Name</h6>
-                <h6 class="text-muted card-subtitle mb-2">Date</h6>
-                <p class="card-text">Content</p><a class="card-link" href="#">Link</a><a class="card-link" href="#">Link</a></div>
-        </div>
-        <div class="card content-post">
-            <div class="card-body">
-                <h4 class="card-title">Announcement Title</h4>
-                <h6 class="text-muted card-subtitle mb-2">Teacher's Name</h6>
-                <h6 class="text-muted card-subtitle mb-2">Date</h6>
-                <p class="card-text">Content</p><a class="card-link" href="#">Link</a><a class="card-link" href="#">Link</a></div>
-        </div>
-        <div class="card content-post">
-            <div class="card-body">
-                <h4 class="card-title">Announcement Title</h4>
-                <h6 class="text-muted card-subtitle mb-2">Teacher's Name</h6>
-                <h6 class="text-muted card-subtitle mb-2">Date</h6>
-                <p class="card-text">Content</p><a class="card-link" href="#">Link</a><a class="card-link" href="#">Link</a></div>
-        </div>
+
     </div>
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
