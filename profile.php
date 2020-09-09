@@ -45,9 +45,15 @@ $error = isset($_SESSION['error']) ? $_SESSION['error']: false;
                                 <div class="col-lg-12 justify-content-center text-center text-lg-left">
                                   <?php
                                     echo "<h4>".htmlentities($_SESSION['name'])."</h4>";
+                                    if(strpos($_SESSION['username'],"T")!==FALSE){
+                                      $stmt = $mysql->prepare('SELECT * FROM teacher,department WHERE teacherID = :tid AND teacher.deptID = department.deptID');
+                                      $stmt->execute(array(':tid' => $_SESSION['username']));
+                                      $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                                      echo '<h6 class="text-muted card-subtitle mb-2">Teacher ID : '.htmlentities($row['teacherID']).'</h6>';
+                                      echo '<p>'.htmlentities($row['designation']).' | '.htmlentities($row['deptName']).'</p>';
+                                      echo '<p>Date of Birth : '.htmlentities($row['dob']).'</p>';
+                                    }
                                    ?>
-                                    <p>Year | Programme / Designation | Department</p>
-                                    <p>15/08/1947 (joining)</p>
                                 </div>
                             </div>
                         </div>
