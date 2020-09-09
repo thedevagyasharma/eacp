@@ -87,8 +87,7 @@ if(isset($_POST['title']) && isset($_POST['type']) && isset($_POST['description'
                       <div class="form-group row"><label class="col-md-3" style="margin: 0px;">Title</label>
                           <div class="col-sm-9"><input class="form-control" type="text" name="title">
                           <input class="form-control" type="hidden" name="type" value="announcement">
-                          <input class="form-control" type="hidden" name="author" value="'.htmlentities($_SESSION['username '])'"></div>
-                      </div>';
+                          <input class="form-control" type="hidden" name="author" value="'.htmlentities($_SESSION['username']).'"></div></div>';
 
                       $stmt = $mysql->prepare('SELECT class.classID, year, division, deptName FROM class join teaches_in on class.classID = teaches_in.classID join department where teacherID = :tid and class.deptID = department.deptID');
                       $stmt->execute(array(
