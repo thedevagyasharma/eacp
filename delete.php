@@ -41,7 +41,7 @@ if(!isset($_SESSION['username'])){
                 id="navcol-1">
                 <ul class="nav navbar-nav mr-auto">
                     <li class="nav-item"><a class="nav-link" href="announcements.php">Announcements</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Attendance</a></li>
+                    <li class="nav-item"><a class="nav-link" href="attendance">Attendance</a></li>
                     <li class="nav-item"><a class="nav-link" href="assignments.php">Assignments</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Grades</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Time Table</a></li>
