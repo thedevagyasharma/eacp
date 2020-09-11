@@ -6,6 +6,7 @@
   background-color: #093479;
   border-radius: 20px;
   padding: 0.5rem 1rem;
+  border-color: #fff;
 }
 
 .card.content-post {
@@ -27,6 +28,7 @@
 .btn-primary:hover {
   background-color: #3398cc;
   transition: background-color 0.25s;
+  border-color: #3398cc;
 }
 
 .btn.btn-light.action-button.btn-logout:hover {
@@ -45,7 +47,7 @@
   padding: 40px;
   box-shadow: 1px 1px 5px rgba(0,0,0,0.1);
   border-radius: 5px;
-  background: #fff;
+  background-color: #093479;
 }
 
 .login-form {
@@ -61,13 +63,13 @@
 }
 
 .login-form a {
-  color: rgba(0,0,0,0.5);
+  color: #fff;
   height: 100%;
   width: 100%;
 }
 
 .login-form a:hover {
-  color: rgba(0,0,0,0.5);
+  color: #fff;
   height: 100%;
   width: 100%;
   text-decoration: underline;
@@ -91,4 +93,3 @@
   opacity: 0.2;
   background-position: center;
 }
-

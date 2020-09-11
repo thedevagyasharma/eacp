@@ -20,7 +20,7 @@ $error = isset($_SESSION['error']) ? $_SESSION['error']: false;
 </head>
 
 <body>
-    <nav class="navbar navbar-light navbar-expand-md navigation-clean-button navbar-expand-lg!important">
+    <nav class="navbar navbar-light navbar-expand-lg navigation-clean-button navbar-expand-lg!important">
         <div class="container"><a class="navbar-brand" href="#">EACP</a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse"
                 id="navcol-1">

@@ -26,14 +26,13 @@ if(isset($_POST['fordate'])){
     if (isset($_POST['att'.$i]) ){
           $attended = 1;
     }
-    $stmt = $mysql->prepare('INSERT INTO attendance VALUES(:cid,:ondate,:suid,:stid,:att,:tid)');
+    $stmt = $mysql->prepare('INSERT INTO attendance VALUES(:cid,:ondate,:suid,:stid,:att)');
     $stmt->execute(array(
       ":cid" => $_SESSION['class'],
       ":ondate" => $_POST['fordate'],
       ":suid" => $row['subjectID'],
       ":stid" => $_POST['st'.$i],
-      ":att" => $attended,
-      ":tid" => $_SESSION['username']
+      ":att" => $attended
     ));
   }
   $_SESSION['success'] = "Attendance Marked";
@@ -56,7 +55,7 @@ if(isset($_POST['fordate'])){
 </head>
 
 <body>
-    <nav class="navbar navbar-light navbar-expand-md navigation-clean-button">
+    <nav class="navbar navbar-light navbar-expand-lg navigation-clean-button">
         <div class="container"><a class="navbar-brand" href="#">EACP</a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse"
                 id="navcol-1">
@@ -180,6 +179,7 @@ if(isset($_POST['fordate'])){
                           <tr>
                               <th>Subject</th>
                               <th>Attendance</th>
+                              <th>Percentage</th>
                           </tr>
                       </thead>
                       <tbody>';
@@ -190,6 +190,7 @@ if(isset($_POST['fordate'])){
                     echo'<tr>
                         <td>'.$row['subjName'].'</td>
                         <td>'.$row['att'].'/'.$row['tot'].'</td>
+                        <td>'.($row['att']/$row['tot'] * 100).'%</td>
                     </tr>';
                     $row = $stmt->fetch(PDO::FETCH_ASSOC);
                   }
