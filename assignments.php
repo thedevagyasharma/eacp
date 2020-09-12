@@ -65,7 +65,7 @@ if(isset($_POST['title']) && isset($_POST['type']) && isset($_POST['description'
                     <li class="nav-item"><a class="nav-link" href="announcements.php">Announcements</a></li>
                     <li class="nav-item"><a class="nav-link" href="attendance.php">Attendance</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Assignments</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Grades</a></li>
+                    <li class="nav-item"><a class="nav-link" href="grade.php">Grades</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Time Table</a></li>
                     <li class="nav-item"><a class="nav-link" href="profile.php">Profile</a></li>
                 </ul><span class="navbar-text actions"> <a class="btn btn-light action-button btn-logout" role="button" href="logout.php">Logout</a></span></div>

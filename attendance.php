@@ -63,7 +63,7 @@ if(isset($_POST['fordate'])){
                     <li class="nav-item"><a class="nav-link" href="announcements.php">Announcements</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Attendance</a></li>
                     <li class="nav-item"><a class="nav-link" href="assignments.php">Assignments</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Grades</a></li>
+                    <li class="nav-item"><a class="nav-link" href="grade.php">Grades</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Time Table</a></li>
                     <li class="nav-item"><a class="nav-link" href="profile.php">Profile</a></li>
                 </ul><span class="navbar-text actions"> <a class="btn btn-light action-button btn-logout" role="button" href="logout.php">Logout</a></span></div>
@@ -110,7 +110,7 @@ if(isset($_POST['fordate'])){
                         <h4 class="card-title">Add Attendance</h4>
                         <form method="post">
                         <div class="row">
-                            <div class="col-10 align-self-center"><select name="forclass">
+                            <div class="col align-self-center"><select name="forclass">
                             <option>Class</option>';
                             $stmt = $mysql->prepare('SELECT * FROM teaches_in,class,department WHERE teacherID =:tid AND teaches_in.classID = class.classID AND class.deptID = department.deptID');
                             $stmt->execute(array(":tid" => $_SESSION['username']));
@@ -140,12 +140,17 @@ if(isset($_POST['fordate'])){
                                   <th>Student ID</th>
                                   <th>Name</th>
                                   <th>Attended</th>
+                                  <th>Total Attendance</th>
                               </tr>
                           </thead>
                           <tbody>';
                           $stmt = $mysql->prepare('SELECT studentID,name FROM student WHERE classID = :cid');
                           $stmt->execute(array(":cid" => $_SESSION['class']));
                           $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                          $stmt1 = $mysql->prepare('SELECT student.studentID,sum(attended) as att ,count(attended) as tot FROM attendance,student WHERE student.classID = :cid AND student.studentID = attendance.studentID GROUP BY student.studentID');
+                          $stmt1->execute(array(":cid" => $_SESSION['class']));
+                          $row1 = $stmt1->fetch(PDO::FETCH_ASSOC);
                           $count=1;
                           while($row!==FALSE){
                             echo'<tr>
@@ -153,9 +158,15 @@ if(isset($_POST['fordate'])){
                                 <td>'.$row['name'].'</td>
                                 <td><input type="checkbox" name="att'.$count.'">
                                   <input type="hidden" name="st'.$count.'" value="'.$row['studentID'].'">
-                                </td>
-
-                            </tr>';
+                                </td>';
+                                if($row1!==FALSE){
+                                  echo'<td>'.$row1['att'].'/'.$row1['tot'].'</td>';
+                                  $row1 = $stmt1->fetch(PDO::FETCH_ASSOC);
+                                }
+                                else{
+                                  echo'<td>0/0</td>';
+                                }
+                            echo'</tr>';
                             $count++;
                             $row = $stmt->fetch(PDO::FETCH_ASSOC); ;
                           }
