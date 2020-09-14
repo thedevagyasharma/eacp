@@ -6,7 +6,6 @@ if(!isset($_SESSION['username'])){
 }
 $error = isset($_SESSION['error']) ? $_SESSION['error']: false;
 
-
 if(isset($_POST['edit'])){
     if(strlen($_POST['email']) < 1 || strlen($_POST['address']) < 1){
       $_SESSION['error'] = "All fields are required";
@@ -100,7 +99,7 @@ if(isset($_POST['edit'])){
             echo('<p style="color:red;">'.htmlentities($_SESSION['error'])."</p>\n");
             unset($_SESSION["error"]);
           } ?>
-     	<form method="post">
+     	<form method="post" id="editform">
 		    <?php
         if(strpos($_SESSION['username'],"T")!==FALSE){
           $stmt = $mysql->prepare('SELECT * FROM teacher, teacherphone WHERE teacher.teacherID = :tid AND teacherphone.teacherID = teacher.teacherID');
@@ -115,7 +114,7 @@ if(isset($_POST['edit'])){
         }
         echo '
         <div class="form-group">
-          <label for="InputEmail1">Email address :</label><input type="email" name="email" class="form-control" id="InputEmail1" aria-describedby="emailHelp" value="'.htmlentities($row['email']).'"></div>
+          <label for="InputEmail1">Email :</label><input type="email" name="email" class="form-control" id="InputEmail1" value="'.htmlentities($row['email']).' "></div>
         <div class="form-group">
           <label for="oldPassword1">Enter Old Password :</label>
           <input type="password" name="oldpassword" class="form-control" id="OldInputPassword1">
@@ -143,11 +142,58 @@ if(isset($_POST['edit'])){
             }
 
  			?>
-		  <button type="edit" class="btn btn-primary" name="edit">Edit</button>
+		  <button type="edit" class="btn btn-primary" name="edit" id="editbtn" disabled>Edit</button>
+    <a class="btn btn-primary" role="button" href="profile.php">Cancel</a>
 		</form>
 
      	</div>
      	<script src="assets/js/jquery.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+    $('#InputEmail1').focusout(function(){
+        var email = $('#InputEmail1').val();
+        if(!email.includes('@') || email == ''){
+          $('#InputEmail1').css("background-color","#ffdddd");
+          $('#InputEmail1').attr("placeholder","Please enter email");
+          $('#editbtn').attr("disabled","true");
+        }
+        else if(email.includes('@') && email != ''){
+          $('#InputEmail1').css("background-color","#ddffdd");
+        }
+        else{
+          $('#InputEmail1').css("background-color","#ffffff");
+        }
+    });
+    $('#OldInputPassword1').focusout(function(){
+      var op = $('#OldInputPassword1').val();
+      if(op == ''){
+        $('#OldInputPassword1').css("background-color","#ffdddd");
+        $('#OldInputPassword1').attr("placeholder","Old Password required");
+        $('#editbtn').attr("disabled","true");
+      }
+      else{
+        $('#OldInputPassword1').css("background-color","#ffffff");
+      }
+    });
+    $('#InputPassword1').focusout(function(){
+      var op = $('#InputPassword1').val();
+      if(op == ''){
+        $('#InputPassword1').css("background-color","#ffdddd");
+        $('#InputPassword1').attr("placeholder","New Password required");
+        $('#editbtn').attr("disabled","true");
+      }
+      else{
+        $('#InputPassword1').css("background-color","#ffffff");
+      }
+    });
+    $(document).change(function(){
+      var email = $('#InputEmail1').val();
+      var op = $('#OldInputPassword1').val();
+      var op1 = $('#InputPassword1').val();
+      if(email.includes('@') && op!='' && op1!=''){
+        $('#editbtn').removeAttr("disabled");
+    }});
+    </script>
+
      </body>
      </html>
