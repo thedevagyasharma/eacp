@@ -35,9 +35,7 @@ if($type == 'assignment' || $type == 'announcement'){
     header('Location:'.$type.'.php');
     return;
   }
-
-
-
+  
  ?>
 <!DOCTYPE html>
 <html lang="en" dir="ltr">

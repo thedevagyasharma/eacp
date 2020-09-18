@@ -141,6 +141,7 @@ if(isset($_POST['fordate'])){
                                   <th>Name</th>
                                   <th>Attended</th>
                                   <th>Total Attendance</th>
+                                  <th>Percentage</th>
                               </tr>
                           </thead>
                           <tbody>';
@@ -161,6 +162,7 @@ if(isset($_POST['fordate'])){
                                 </td>';
                                 if($row1!==FALSE){
                                   echo'<td>'.$row1['att'].'/'.$row1['tot'].'</td>';
+                                  echo'<td>'.($row1['att']/$row1['tot'] * 100).'%</td>';
                                   $row1 = $stmt1->fetch(PDO::FETCH_ASSOC);
                                 }
                                 else{
@@ -194,7 +196,9 @@ if(isset($_POST['fordate'])){
                           </tr>
                       </thead>
                       <tbody>';
-                  $stmt = $mysql->prepare('SELECT sum(attended) as att, count(attended) as tot ,attendance.subjectID,subjName FROM attendance,subject WHERE studentID = :sid AND attendance.subjectID = subject.subjectID GROUP BY attendance.subjectID');
+
+                  $stmt = $mysql->prepare('call calcattendance(:sid)');
+                /*  $stmt = $mysql->prepare('SELECT sum(attended) as att, count(attended) as tot ,attendance.subjectID,subjName FROM attendance,subject WHERE studentID = :sid AND attendance.subjectID = subject.subjectID GROUP BY attendance.subjectID'); */
                   $stmt->execute(array(":sid"=>$_SESSION['username']));
                   $row = $stmt->fetch(PDO::FETCH_ASSOC);
                   while($row!==FALSE){

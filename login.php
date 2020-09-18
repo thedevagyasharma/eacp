@@ -72,8 +72,12 @@ if(isset($_POST['username'])  && isset($_POST['password'])){
         <form method="post">
           <?php
             if(isset($_SESSION['error'])) {
-              echo('<p style="color:red;">'.htmlentities($_SESSION['error'])."</p>\n");
+              echo('<p style="color:white;">'.htmlentities($_SESSION['error'])."</p>\n");
               unset($_SESSION["error"]);
+            }
+            if(isset($_SESSION['success'])) {
+              echo('<p style="color:white;">'.htmlentities($_SESSION['success'])."</p>\n");
+              unset($_SESSION["success"]);
             }
             ?>
             <div class="illustration d-flex justify-content-center align-self-center"></div>
