@@ -124,6 +124,10 @@ if(isset($_POST['edit'])){
           <input type="password" name="newpassword" class="form-control" id="InputPassword1">
         </div>
         <div class="form-group">
+          <label for="InputPassword1">Confirm Password :</label>
+          <input type="password" name="cnfpassword" class="form-control" id="InputPassword2">
+        </div>
+        <div class="form-group">
           <label for="InputAddress">Address :</label>
           <input type="address" name="address" class="form-control" id="InputAddress" value="'.htmlentities($row['address']).'">
         </div>';
@@ -182,17 +186,31 @@ if(isset($_POST['edit'])){
         $('#InputPassword1').attr("placeholder","New Password required");
         $('#editbtn').attr("disabled","true");
       }
-      else{
-        $('#InputPassword1').css("background-color","#ffffff");
+    });
+    $('#InputPassword2').focusout(function(){
+      var op = $('#InputPassword2').val();
+      if(op == ''){
+        $('#InputPassword2').css("background-color","#ffdddd");
+        $('#InputPassword2').attr("placeholder","Confirmation Required");
+        $('#editbtn').attr("disabled","true");
       }
     });
     $(document).change(function(){
       var email = $('#InputEmail1').val();
       var op = $('#OldInputPassword1').val();
       var op1 = $('#InputPassword1').val();
+      var op2 = $('#InputPassword2').val();
       if(email.includes('@') && op!='' && op1!=''){
         $('#editbtn').removeAttr("disabled");
-    }});
+    }
+      if(op1 == op2){
+        $('#InputPassword1').css("background-color","#ddffdd");
+        $('#InputPassword2').css("background-color","#ddffdd");
+      }
+      else if(op1 != op2){
+        $('#InputPassword2').css("background-color","#ffdddd");
+      }
+  });
     </script>
 
      </body>

@@ -80,9 +80,13 @@ if(isset($_POST['username'])  && isset($_POST['password'])){
             <h1 class="d-sm-none">Login</h1>
             <div class="form-group"><input class="form-control" type="text" placeholder="Username" name="username"></div>
             <div class="form-group"><input class="form-control" type="password" placeholder="Password" name="password"></div>
-            <div class="form-group"><button class="btn btn-primary btn-login" type="submit">Log In</button></div><a href="#">Forgot username or password?</a></form>
+            <div class="form-group"><button class="btn btn-primary btn-login" type="submit">Log In</button></div>
+            <a href="#">Forgot username or password?</a>
+            <span style="color:#fff">Not registered? <a href="register.php">Register here</a></span>
+          </form>
 
-    </div>
+      </div>
+
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
 </body>
