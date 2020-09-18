@@ -29,7 +29,7 @@ $error = isset($_SESSION['error']) ? $_SESSION['error']: false;
                     <li class="nav-item"><a class="nav-link" href="attendance.php">Attendance</a></li>
                     <li class="nav-item"><a class="nav-link" href="assignments.php">Assignments</a></li>
                     <li class="nav-item"><a class="nav-link" href="grade.php">Grades</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Time Table</a></li>
+                    <li class="nav-item"><a class="nav-link" href="timetable.php">Time Table</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Profile</a></li>
                 </ul><span class="navbar-text actions"> <a class="btn btn-light action-button btn-logout" role="button" href="logout.php">Logout</a></span></div>
         </div>

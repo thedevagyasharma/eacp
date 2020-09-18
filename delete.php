@@ -4,19 +4,35 @@ require_once "mysql.php";
 if(!isset($_SESSION['username'])){
   die('ACCESS DENIED');
 }
+$stmt = $mysql->prepare('SELECT type from post where postID =:pid');
+$stmt->execute(array(":pid"=>$_GET['postID']));
+$type = $stmt->fetch(PDO::FETCH_ASSOC);
+$type = $type['type'];
+if($type == 'assignment' || $type == 'announcement'){
+  $type = $type.'s';
+}
 
   if(isset($_POST['postID']) && isset($_POST['delete'])){
+    $stmt1 = $mysql->prepare('SELECT * FROM post where postID = :pid');
+    $stmt1->execute(array(
+      ':pid' => $_POST['postID']
+    ));
+    $row1 = $stmt1->fetch(PDO::FETCH_ASSOC);
+    if($row1['file']!=''){
+      unlink($row1['file']);
+    }
+
     $stmt = $mysql->prepare('DELETE FROM post WHERE postID = :pid');
     $stmt->execute(array(
       ':pid' => $_POST['postID']
     ));
     $_SESSION['success'] = "Successfully Deleted";
-    header('Location:announcements.php');
+    header('Location:'.$type.'.php');
     return;
   }
   if(isset($_POST['cancel'])){
     $_SESSION['error'] = "Delete Cancel";
-    header('Location:announcements.php');
+    header('Location:'.$type.'.php');
     return;
   }
 
@@ -41,10 +57,10 @@ if(!isset($_SESSION['username'])){
                 id="navcol-1">
                 <ul class="nav navbar-nav mr-auto">
                     <li class="nav-item"><a class="nav-link" href="announcements.php">Announcements</a></li>
-                    <li class="nav-item"><a class="nav-link" href="attendance">Attendance</a></li>
+                    <li class="nav-item"><a class="nav-link" href="attendance.php">Attendance</a></li>
                     <li class="nav-item"><a class="nav-link" href="assignments.php">Assignments</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Grades</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Time Table</a></li>
+                    <li class="nav-item"><a class="nav-link" href="grade.php">Grades</a></li>
+                    <li class="nav-item"><a class="nav-link" href="timetable.php">Time Table</a></li>
                     <li class="nav-item"><a class="nav-link" href="profile.php">Profile</a></li>
                 </ul><span class="navbar-text actions"> <a class="btn btn-light action-button btn-logout" role="button" href="logout.php">Logout</a></span></div>
         </div>

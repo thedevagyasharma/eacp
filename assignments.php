@@ -20,8 +20,13 @@ if(isset($_POST['title']) && isset($_POST['type']) && isset($_POST['description'
       $file_tmp = $_FILES['filein']['tmp_name'];
       $file_type = $_FILES['filein']['type'];
       $file_ext = strtolower(end(explode('.',$_FILES['filein']['name'])));
-      $location = "uploads/assignments/".$file_name;
-      move_uploaded_file($file_tmp,$location);
+      if($file_name==''){
+        $location = '';
+      }
+      else{
+        $location = "uploads/assignments/".$file_name;
+        move_uploaded_file($file_tmp,$location);
+      }
     }
     $stmt = $mysql->prepare('INSERT INTO post(title,posttext,file,posttime,type,classID,teacherID) values(:title, :posttext, :file, now(), :type, :classID, :tid)');
     $stmt->execute(array(
@@ -66,7 +71,7 @@ if(isset($_POST['title']) && isset($_POST['type']) && isset($_POST['description'
                     <li class="nav-item"><a class="nav-link" href="attendance.php">Attendance</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Assignments</a></li>
                     <li class="nav-item"><a class="nav-link" href="grade.php">Grades</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Time Table</a></li>
+                    <li class="nav-item"><a class="nav-link" href="timetable.php">Time Table</a></li>
                     <li class="nav-item"><a class="nav-link" href="profile.php">Profile</a></li>
                 </ul><span class="navbar-text actions"> <a class="btn btn-light action-button btn-logout" role="button" href="logout.php">Logout</a></span></div>
         </div>
@@ -125,7 +130,9 @@ if(isset($_POST['title']) && isset($_POST['type']) && isset($_POST['description'
                             }
 
                     echo'</div>
-                    <div class="offset-11"><a class="btn btn-light action-button btn-logout" role="button" style="color:white;" href="delete.php?postID='.$row['postID'].'">Delete</a></div>
+                    <div class="offset-11"><a class="btn btn-light action-button btn-logout" role="button" style="color:white;" href="editPost.php?postID='.$row['postID'].'">Edit</a>
+                    <a class="btn btn-light action-button btn-logout" role="button" style="color:white;" href="delete.php?postID='.$row['postID'].'">Delete</a>
+                    </div>
                     </div>';
                     $row = $stmt->fetch(PDO::FETCH_ASSOC);
                   }

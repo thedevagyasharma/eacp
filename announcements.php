@@ -13,15 +13,21 @@ if(isset($_POST['title']) && isset($_POST['type']) && isset($_POST['description'
   }
 
   else{
-    $location = '';
+
     if(isset($_FILES['filein'])){
       $file_name = $_FILES['filein']['name'];
       $file_size = $_FILES['filein']['size'];
       $file_tmp = $_FILES['filein']['tmp_name'];
       $file_type = $_FILES['filein']['type'];
       $file_ext = strtolower(end(explode('.',$_FILES['filein']['name'])));
-      $location = "uploads/announcements/".$file_name;
-      move_uploaded_file($file_tmp,$location);
+      if($file_name==''){
+        $location = '';
+      }
+      else{
+        $location = "uploads/announcements/".$file_name;
+        move_uploaded_file($file_tmp,$location);
+      }
+
     }
     $stmt = $mysql->prepare('INSERT INTO post(title,posttext,file,posttime,type,classID,teacherID) values(:title, :posttext, :file, now(), :type, :classID, :tid)');
     $stmt->execute(array(
@@ -62,7 +68,7 @@ if(isset($_POST['title']) && isset($_POST['type']) && isset($_POST['description'
                     <li class="nav-item"><a class="nav-link" href="attendance.php">Attendance</a></li>
                     <li class="nav-item"><a class="nav-link" href="assignments.php">Assignments</a></li>
                     <li class="nav-item"><a class="nav-link" href="grade.php">Grades</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Time Table</a></li>
+                    <li class="nav-item"><a class="nav-link" href="timetable.php">Time Table</a></li>
                     <li class="nav-item"><a class="nav-link" href="profile.php">Profile</a></li>
                 </ul><span class="navbar-text actions"> <a class="btn btn-light action-button btn-logout" role="button" href="logout.php">Logout</a></span></div>
         </div>
@@ -120,11 +126,14 @@ if(isset($_POST['title']) && isset($_POST['type']) && isset($_POST['description'
                             <h4 class="card-title">'.htmlentities($row['title']).'</h4>
                             <h6 class="text-muted card-subtitle mb-2">'.htmlentities($row['posttime']).'</h6>
                             <p class="card-text">'.htmlentities($row['posttext']).'</p>';
-                            if($row['file']!=='uploads/announcements/'){
+                            if($row['file']!==''){
                                 echo'<a class="card-link" href="'.htmlentities($row['file']).'" download>Download Attachment</a>';
                             }
                     echo'</div>
-                    <div class="offset-11"><a class="btn btn-light action-button btn-logout" role="button" style="color:white;" href="delete.php?postID='.$row['postID'].'">Delete</a></div>
+                    <div class="offset-11">
+                      <a class="btn btn-light action-button btn-logout" role="button" style="color:white;" href="editPost.php?postID='.$row['postID'].'">Edit</a>
+                      <a class="btn btn-light action-button btn-logout" role="button" style="color:white;" href="delete.php?postID='.$row['postID'].'">Delete</a>
+                    </div>
                     </div>';
                     $row = $stmt->fetch(PDO::FETCH_ASSOC);
                   }
@@ -147,7 +156,7 @@ if(isset($_POST['title']) && isset($_POST['type']) && isset($_POST['description'
                             <h6 class="text-muted card-subtitle mb-2">'.htmlentities($row['author']).'</h6>
                             <h6 class="text-muted card-subtitle mb-2">'.htmlentities($row['posttime']).'</h6>
                             <p class="card-text">'.htmlentities($row['posttext']).'</p>';
-                            if($row['file']!=='uploads/announcements/'){
+                            if($row['file']!==''){
                                 echo'<a class="card-link" href="'.htmlentities($row['file']).'" download>Download Attachment</a>';
                             }
                     echo'</div></div>';
