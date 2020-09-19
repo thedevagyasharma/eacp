@@ -44,7 +44,7 @@
     }
 
     else if(strpos($_POST['uid'],"S")!==FALSE) {
-      $ins = $mysql->prepare('INSERT INTO student(studentID, email, password, name, address, dob, yearjoin, yearpass, classID) VALUES(:sid, :em, :pwd, nm, :addr, :dob, now(), dateadd(year,4,now()), :cid)');
+      $ins = $mysql->prepare('INSERT INTO student(studentID, email, password, name, address, dob, yearjoin, yearpass, classID) VALUES(:sid, :em, :pwd, :nm, :addr, :dob, year(now()), (select year(DATE_ADD(now(), interval 4 year))), :cid)');
       $ins->execute(array(
         ":sid" => $_POST["uid"],
         ":em" => $_POST["email"],
@@ -54,6 +54,8 @@
         ":dob" => $_POST["dob"],
         ":cid" => $_POST["classID"]
       ));
+      $up = $mysql->prepare('UPDATE class set noStudents = noStudents + 1 where classID = :cid');
+      $up->execute(array(":cid"));
       while($i<=2){
         if($_POST["con".$i]){
           $ins = $mysql->prepare('INSERT INTO studentphone VALUES(:sid,:phone)');
@@ -118,8 +120,8 @@
                     <div class="col"></div>
                 </div>
                 <div class="form-row">
-                    <div class="col"><label>Primary Contact Number</label><input class="form-control" type="text" name="con1" id="ph1" pattern="[0-9]{10}"></div>
-                    <div class="col"><label>Secondary Contact Number</label><input class="form-control" type="text" name="con2" id="ph2" pattern="[0-9]{10}"></div>
+                    <div class="col"><label>Primary Contact Number</label><input class="form-control" type="text" name="con1" id="ph1" placeholder="Enter 10 Digit Mobile number"pattern="[0-9]{10}"></div>
+                    <div class="col"><label>Secondary Contact Number</label><input class="form-control" type="text" name="con2" id="ph2" placeholder="Enter 10 Digit Mobile number" pattern="[0-9]{10}"></div>
                 </div>
                 <div class="form-row">
                     <div class="col"><label>Address</label><input class="form-control" type="text" name="addr"></div>
